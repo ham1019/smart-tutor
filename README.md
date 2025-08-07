@@ -1,46 +1,97 @@
-# Getting Started with Create React App
+# AI 과외선생님 (스마트과외)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+학부모와 자녀가 함께 사용하는 AI 기반 학습 관리 플랫폼입니다.
 
-## Available Scripts
+## 프로젝트 설정
 
-In the project directory, you can run:
+### 1. 의존성 설치
+```bash
+npm install
+```
 
-### `npm start`
+### 2. 환경 변수 설정
+프로젝트 루트에 `.env` 파일을 생성하고 다음 내용을 추가하세요:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+# Supabase 설정
+REACT_APP_SUPABASE_URL=your_supabase_url_here
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# 개발용 Supabase 서비스 키 (시드 스크립트용)
+SUPABASE_URL=your_supabase_url_here
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+```
 
-### `npm test`
+### 3. 개발 서버 실행
+```bash
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 4. 테스트 사용자 생성 (선택사항)
+```bash
+node scripts/seed-users.js
+```
 
-### `npm run build`
+## 프로젝트 구조
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+src/
+├── components/                   # 공통 컴포넌트
+│   └── Layout.tsx              # Material-UI 레이아웃
+├── domains/
+│   └── auth/                    # 인증 도메인
+│       ├── components/          # 인증 관련 컴포넌트
+│       │   └── PrivateRoute.jsx
+│       ├── services/            # 인증 서비스
+│       │   └── authService.js
+│       └── AuthContext.jsx      # 인증 컨텍스트
+├── supabase.js                  # Supabase 클라이언트
+└── App.tsx                      # 메인 앱 컴포넌트
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 주요 기능
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **인증 시스템**: Supabase Auth를 이용한 JWT 기반 인증
+- **사용자 관리**: 학부모/자녀 역할 구분
+- **권한 관리**: PrivateRoute를 통한 접근 제어
+- **실시간 상태**: 인증 상태 실시간 업데이트
+- **UI 프레임워크**: Material-UI 기반 반응형 디자인
+- **CI/CD**: GitHub Actions를 통한 자동화된 배포
 
-### `npm run eject`
+## 개발 명령어
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+# 개발 서버 실행
+npm start
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# 프로덕션 빌드
+npm run build
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# 테스트 실행
+npm test
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+# 린트 검사
+npm run lint
 
-## Learn More
+# 린트 자동 수정
+npm run lint:fix
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 배포
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Vercel 배포
+1. Vercel 계정 생성
+2. GitHub 저장소 연결
+3. 환경 변수 설정:
+   - `REACT_APP_SUPABASE_URL`
+   - `REACT_APP_SUPABASE_ANON_KEY`
+
+### GitHub Actions
+- main 브랜치에 푸시 시 자동 배포
+- lint, test, build 단계 포함
+
+## 테스트 계정
+
+시드 스크립트 실행 후 사용 가능한 테스트 계정:
+- **학부모**: parent@test.com / testpassword123
+- **자녀**: child@test.com / testpassword123
