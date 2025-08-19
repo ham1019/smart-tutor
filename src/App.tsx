@@ -1,29 +1,54 @@
-import React from 'react';
-import { AuthProvider } from './domains/auth/AuthContext';
+import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './domains/auth/AuthContext';
 import Layout from './components/Layout';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Container, Button } from '@mui/material';
+import LoginPage from './domains/auth/components/LoginPage';
+import SignupPage from './domains/auth/components/SignupPage';
+import ParentDashboard from './domains/dashboard/components/ParentDashboard';
+import ChildDashboard from './domains/dashboard/components/ChildDashboard';
+
+// 메인 앱 컴포넌트
+const MainApp: React.FC = () => {
+  const { user, loading, userType, isInitialized } = useAuth();
+  const [currentPage, setCurrentPage] = useState<'login' | 'signup'>('login');
+
+  // 인증 초기화가 완료되지 않았으면 로딩 표시
+  if (!isInitialized || loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <Typography>로딩 중...</Typography>
+      </Box>
+    );
+  }
+
+  // 로그인하지 않은 사용자
+  if (!user) {
+    if (currentPage === 'signup') {
+      return <SignupPage onBackToLogin={() => setCurrentPage('login')} />;
+    }
+    return <LoginPage onGoToSignup={() => setCurrentPage('signup')} />;
+  }
+
+  // 로그인한 사용자 - 사용자 유형에 따라 대시보드 표시
+  const renderDashboard = () => {
+    if (userType === 'child') {
+      return <ChildDashboard />;
+    } else {
+      return <ParentDashboard />;
+    }
+  };
+
+  return (
+    <Layout>
+      {renderDashboard()}
+    </Layout>
+  );
+};
 
 function App() {
   return (
     <AuthProvider>
-      <Layout>
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography variant="h3" component="h1" gutterBottom>
-            AI 과외선생님
-          </Typography>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            학부모와 자녀를 위한 스마트 학습 관리 플랫폼
-          </Typography>
-          <Paper sx={{ p: 3, mt: 3, maxWidth: 600, mx: 'auto' }}>
-            <Typography variant="body1" paragraph>
-              인증 시스템이 성공적으로 구축되었습니다!
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              환경 변수를 설정하고 개발 서버를 실행해보세요.
-            </Typography>
-          </Paper>
-        </Box>
-      </Layout>
+      <MainApp />
     </AuthProvider>
   );
 }

@@ -15,10 +15,11 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
-    // 앱 시작 시 현재 사용자 확인
-    checkCurrentUser()
+    // 앱 시작 시 인증 상태 초기화
+    initializeAuth()
     
     // 인증 상태 변경 리스너
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -35,17 +36,23 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe()
   }, [])
 
-  const checkCurrentUser = async () => {
+  const initializeAuth = async () => {
     try {
-      const { user, error } = await authService.getCurrentUser()
-      if (error) {
-        console.error('Error getting current user:', error)
+      // 1. 세션이 있는지 확인 (쿠키/로컬스토리지)
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (session) {
+        // 2. 세션이 있으면 사용자 정보 설정
+        setUser(session.user)
       }
-      setUser(user)
     } catch (error) {
-      console.error('Error checking current user:', error)
+      // 3. 에러가 발생해도 앱은 계속 실행 (로그인 페이지로 이동)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Auth initialization warning:', error.message)
+      }
     } finally {
       setLoading(false)
+      setIsInitialized(true)
     }
   }
 
@@ -80,7 +87,8 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     isAuthenticated: !!user,
-    userType: user?.user_metadata?.user_type || null
+    userType: user?.user_metadata?.user_type || null,
+    isInitialized
   }
 
   return (
