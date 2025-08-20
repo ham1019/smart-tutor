@@ -7,7 +7,8 @@ import {
   Box,
   CssBaseline,
   ThemeProvider,
-  createTheme
+  createTheme,
+  Button
 } from '@mui/material';
 import { useAuth } from '../domains/auth/AuthContext';
 
@@ -29,6 +30,14 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth();
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -39,9 +48,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               AI 과외선생님
             </Typography>
             {user && (
-              <Typography variant="body2" sx={{ mr: 2 }}>
-                {user.user_metadata?.name || user.email}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography variant="body2">
+                  {user.user_metadata?.name || user.email}
+                </Typography>
+                <Button 
+                  color="inherit" 
+                  onClick={handleSignOut}
+                  sx={{ 
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    '&:hover': {
+                      border: '1px solid rgba(255,255,255,0.5)',
+                      backgroundColor: 'rgba(255,255,255,0.1)'
+                    }
+                  }}
+                >
+                  로그아웃
+                </Button>
+              </Box>
             )}
           </Toolbar>
         </AppBar>

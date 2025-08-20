@@ -6,11 +6,12 @@ import LoginPage from './domains/auth/components/LoginPage';
 import SignupPage from './domains/auth/components/SignupPage';
 import ParentDashboard from './domains/dashboard/components/ParentDashboard';
 import ChildDashboard from './domains/dashboard/components/ChildDashboard';
+import ProfileManagement from './domains/auth/components/ProfileManagement';
 
 // 메인 앱 컴포넌트
 const MainApp: React.FC = () => {
   const { user, loading, userType, isInitialized } = useAuth();
-  const [currentPage, setCurrentPage] = useState<'login' | 'signup'>('login');
+  const [currentPage, setCurrentPage] = useState<'login' | 'signup' | 'dashboard' | 'profile'>('dashboard');
 
   // 인증 초기화가 완료되지 않았으면 로딩 표시
   if (!isInitialized || loading) {
@@ -29,18 +30,24 @@ const MainApp: React.FC = () => {
     return <LoginPage onGoToSignup={() => setCurrentPage('signup')} />;
   }
 
-  // 로그인한 사용자 - 사용자 유형에 따라 대시보드 표시
-  const renderDashboard = () => {
-    if (userType === 'child') {
-      return <ChildDashboard />;
-    } else {
-      return <ParentDashboard />;
+  // 로그인한 사용자 - 페이지에 따라 컴포넌트 렌더링
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'profile':
+        return <ProfileManagement />;
+      case 'dashboard':
+      default:
+        if (userType === 'child') {
+          return <ChildDashboard onNavigateToProfile={() => setCurrentPage('profile')} />;
+        } else {
+          return <ParentDashboard onNavigateToProfile={() => setCurrentPage('profile')} />;
+        }
     }
   };
 
   return (
     <Layout>
-      {renderDashboard()}
+      {renderPage()}
     </Layout>
   );
 };

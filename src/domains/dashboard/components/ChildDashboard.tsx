@@ -25,7 +25,11 @@ interface Task {
   due_date: string;
 }
 
-const ChildDashboard: React.FC = () => {
+interface ChildDashboardProps {
+  onNavigateToProfile: () => void;
+}
+
+const ChildDashboard: React.FC<ChildDashboardProps> = ({ onNavigateToProfile }) => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -191,6 +195,44 @@ const ChildDashboard: React.FC = () => {
         <Typography variant="body2" color="text.secondary">
           {completedTasks.length} / {tasks.length} 과제 완료
         </Typography>
+      </Box>
+
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 3, mt: 4 }}>
+        {/* 빠른 액션 */}
+        <Box>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                ⚡ 빠른 액션
+              </Typography>
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  fullWidth
+                  onClick={onNavigateToProfile}
+                >
+                  👤 프로필 관리
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  color="primary" 
+                  fullWidth
+                >
+                  📚 학습 진도
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  color="primary" 
+                  fullWidth
+                >
+                  🏆 성취도
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
     </Container>
   );

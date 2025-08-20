@@ -14,7 +14,11 @@ import { useAuth } from '../../auth/AuthContext';
 import GoalInputForm from '../../goals/components/GoalInputForm';
 import GoalsList from '../../goals/components/GoalsList';
 
-const ParentDashboard: React.FC = () => {
+interface ParentDashboardProps {
+  onNavigateToProfile: () => void;
+}
+
+const ParentDashboard: React.FC<ParentDashboardProps> = ({ onNavigateToProfile }) => {
   const { user } = useAuth();
 
   // 임시 데이터 (나중에 실제 API로 교체)
@@ -106,34 +110,25 @@ const ParentDashboard: React.FC = () => {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Button 
                   variant="contained" 
+                  color="primary" 
                   fullWidth
-                  onClick={() => {/* TODO: 새 목표 설정 모달 */}}
+                  onClick={onNavigateToProfile}
                 >
-                  🎯 새 목표 설정
+                  👤 프로필 관리
                 </Button>
-                
                 <Button 
                   variant="outlined" 
+                  color="primary" 
                   fullWidth
-                  onClick={() => {/* TODO: 로드맵 생성 */}}
                 >
-                  🗺️ 로드맵 생성
+                  🎯 목표 설정
                 </Button>
-                
                 <Button 
                   variant="outlined" 
+                  color="primary" 
                   fullWidth
-                  onClick={() => {/* TODO: 일정 관리 */}}
                 >
                   📅 일정 관리
-                </Button>
-                
-                <Button 
-                  variant="outlined" 
-                  fullWidth
-                  onClick={() => {/* TODO: 리포트 보기 */}}
-                >
-                  📊 리포트 보기
                 </Button>
               </Box>
             </CardContent>
